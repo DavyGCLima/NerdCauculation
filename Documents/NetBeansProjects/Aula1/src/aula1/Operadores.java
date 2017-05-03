@@ -11,6 +11,14 @@ package aula1;
  */
 public class Operadores {
     // # = infinito 
+    
+    public static String sen(String a)throws Exception{
+        if("#".equals(a) || "-#".equals(a))
+            throw new Exception("Indeterminação do seno de infinito!");
+        else
+            Math.sin(Double.parseDouble(a));
+    }
+    
     public static String pow(String a, String b) throws Exception{
         if("#".equals(a) || "#".equals(b))
             return "#";
