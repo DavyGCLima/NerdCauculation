@@ -8,13 +8,10 @@ package aula1;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import static java.lang.Math.*;
 import java.util.Arrays;
 import java.util.EmptyStackException;
 import java.util.Scanner;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -73,6 +70,7 @@ public class Aula1 {
                     System.out.println("Informe a expressão:");
                     info = dados.next();
                     System.out.println(conversor(info,"0"));
+                    valida = false;
                     break;
                 default:
                     System.out.println("Escolha inválida!");
@@ -108,9 +106,16 @@ public class Aula1 {
         
         for(int i = 0; i < entrada.length(); i++){
             String s = String.valueOf(entrada.charAt(i));
-            if(Character.isDigit(entrada.charAt(i)) || entrada.charAt(i) == 'x')
-                pilha.push(s);
-            else if(Arrays.asList(operadoresSuportados).contains(s)){
+            if(Character.isDigit(entrada.charAt(i)) || entrada.charAt(i) == 'x'){
+                if(Character.isDigit(entrada.charAt(i))){
+                    s = String.valueOf(entrada.charAt(i));
+                    while(Character.isDigit(entrada.charAt(i+1))){
+                        s += String.valueOf(entrada.charAt(i+1));
+                        i++;
+                    }         
+                }
+                pilha.push(s);                
+            }else if(Arrays.asList(operadoresSuportados).contains(s)){
                 String n1 = pilha.pop();
                 String n2 = pilha.pop();
                 String resultado;
@@ -157,9 +162,23 @@ public class Aula1 {
         String[] operadoresSuportados = {"+","-","*","/","^","(",")"};
         
         for(int i = 0; i < entrada.length(); i++){
-            String s = String.valueOf(entrada.charAt(i));
+            String s;
+            try{
+            if(Character.isDigit(entrada.charAt(i))){
+                s = String.valueOf(entrada.charAt(i));
+                while(Character.isDigit(entrada.charAt(i+1))){
+                    s += String.valueOf(entrada.charAt(i+1));
+                    i++;
+                }            
+            }else
+                s = String.valueOf(entrada.charAt(i));                
             simbolos.push(s);
             input.push(s);
+            }catch(IndexOutOfBoundsException ex){
+                s = String.valueOf(entrada.charAt(i));
+                simbolos.push(s);
+                input.push(s);
+            }
         }
         while(!simbolos.isEMpty()){
             String simbolo = simbolos.pop();
