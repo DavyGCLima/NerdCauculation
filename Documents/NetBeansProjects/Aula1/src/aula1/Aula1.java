@@ -69,7 +69,11 @@ public class Aula1 {
                 case 2:
                     System.out.println("Informe a expressão:");
                     info = dados.next();
-                    System.out.println(conversor(info,"0"));
+                    try {
+                        System.out.println(conversor(info,"0"));
+                    } catch (Exception ex) {
+                        System.out.println("Erro: "+ex.getMessage());
+                    }
                     valida = false;
                     break;
                 default:
@@ -102,10 +106,21 @@ public class Aula1 {
     public static String calculaPolonesaINversa(String entrada, String info){
         Stack<String> pilha = new Stack<>();
         Stack<Op> operadores = new Stack<>();
-        String[] operadoresSuportados = {"+","-","*","/","^","(",")"};
+        String[] operadoresSuportados = {"+","-","*","/","^","(",")","sen"};
         
         for(int i = 0; i < entrada.length(); i++){
-            String s = String.valueOf(entrada.charAt(i));
+            String s = "";
+            if(entrada.charAt(i) == 's'){
+                
+                if(entrada.contains("sen")){
+                    int ind = entrada.indexOf("sen");
+                     ind += 2;
+                     i = 0;
+                    entrada = entrada.substring(ind+1);
+                    s = "sen";
+                }
+            }else
+                    s = String.valueOf(entrada.charAt(i));
             if(Character.isDigit(entrada.charAt(i)) || entrada.charAt(i) == 'x'){
                 if(Character.isDigit(entrada.charAt(i))){
                     s = String.valueOf(entrada.charAt(i));
@@ -116,9 +131,16 @@ public class Aula1 {
                 }
                 pilha.push(s);                
             }else if(Arrays.asList(operadoresSuportados).contains(s)){
-                String n1 = pilha.pop();
-                String n2 = pilha.pop();
+                String n1 = "";
+                String n2 = "";
+                if(s.equals("sen"))
+                    n1 = pilha.pop();
+                else{
+                    n1 = pilha.pop();
+                    n2 = pilha.pop();
+                }
                 String resultado;
+                
                 if(n1.equals("x"))
                     n1 = info;
                 else if(n2.equals("x"))
@@ -145,6 +167,10 @@ public class Aula1 {
                             resultado = Operadores.pow(n2, n1);
                             pilha.push(resultado);
                             break;
+                        case "sen":
+                            resultado = Operadores.sen(n1);
+                            pilha.push(resultado);
+                            break;
                     }
                 }catch(Exception e){
                     System.out.println("Erro: "+e.getMessage());
@@ -154,15 +180,15 @@ public class Aula1 {
         return pilha.peek();
     }
     
-    public static String conversor(String entrada, String info){
+    public static String conversor(String entrada, String info) throws Exception{
         Pilha<String> input = new Pilha<>();
         Pilha<String> simbolos = new Pilha<>();
         Stack<Op> operadores = new Stack<>();
         Pilha<String> saida = new Pilha<>();
-        String[] operadoresSuportados = {"+","-","*","/","^","(",")"};
+        String[] operadoresSuportados = {"+","-","*","/","^","(",")","sen"};
         
         for(int i = 0; i < entrada.length(); i++){
-            String s;
+            String s = "";
             try{
             if(Character.isDigit(entrada.charAt(i))){
                 s = String.valueOf(entrada.charAt(i));
@@ -170,8 +196,27 @@ public class Aula1 {
                     s += String.valueOf(entrada.charAt(i+1));
                     i++;
                 }            
-            }else
-                s = String.valueOf(entrada.charAt(i));                
+            }else{
+                if(entrada.charAt(i) == 's' && entrada.contains("sen")){
+                    int ind = entrada.indexOf("sen");
+                    String ent = entrada.substring(ind);
+                    int ini = ent.indexOf("sen(")+4;
+                    int fim = ent.indexOf(")/");
+                    CharSequence x = ent.subSequence(ini, fim);
+                    if(entrada.contains("sen("+x+")/"+x)){
+                        entrada = entrada.replace("sen("+x+")/"+x, "1");
+                        s = "1";
+                    }else{
+                         ind += 2;
+                         i = -1;
+                        entrada = entrada.substring(ind+1);
+                        if(entrada.charAt(0) != '(')
+                            throw new Exception("Falta de '(' após sen");
+                        s = "sen";
+                    }
+                }else
+                        s = String.valueOf(entrada.charAt(i)); 
+            }
             simbolos.push(s);
             input.push(s);
             }catch(IndexOutOfBoundsException ex){
@@ -320,7 +365,11 @@ public class Aula1 {
             i++;
         }
         for(i = 0; i < x.length; i++){
-             y[i] = conversor(entrada,  lx[i]);
+            try {
+                y[i] = conversor(entrada,  lx[i]);
+            } catch (Exception ex) {
+                System.out.println("Erro: "+ ex.getMessage());
+            }
              System.out.println("F("+x[i]+") = "+y[i]);
         }
         double[] ly = new double[y.length];
