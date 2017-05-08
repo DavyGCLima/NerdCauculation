@@ -24,6 +24,7 @@ public class Op {
        if(operador.equals("("))                             return 1;
        else if(operador.equals("+")||operador.equals("-"))  return 2;
        else if(operador.equals("*")||operador.equals("/"))  return 3;
+       else if(operador.equals("sen")) return 4;
        return -1; 
    }
 }

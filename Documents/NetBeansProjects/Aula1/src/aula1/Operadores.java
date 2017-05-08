@@ -16,7 +16,7 @@ public class Operadores {
         if("#".equals(a) || "-#".equals(a))
             throw new Exception("Indeterminação do seno de infinito!");
         else
-            Math.sin(Double.parseDouble(a));
+           return String.valueOf(Math.sin(Double.parseDouble(a)));//parametro em radianos
     }
     
     public static String pow(String a, String b) throws Exception{
